@@ -3,6 +3,10 @@ from celery.schedules import crontab
 import os
 from requests import get
 import random
+from time import sleep
+from json import dumps
+from kafka import KafkaProducer
+
 
 lastcontent = ''
 app = Celery('tasks', broker='redis://172.20.0.10:6379/0')
@@ -26,8 +30,14 @@ def test():
     if rsp.content != lastcontent :
         print('change')
         lastcontent=rsp.content
-        path=os.path.join(DATa_dir,'tehran_{}.gpx'.format(random.randint(10000)))
+        path=os.path.join(DATa_dir,'tehran_{}.gpx'.format(random.randint(0, 10000)))
         with open(path,'wb') as f:
             f.write(rsp.content)
+        
+        producer = KafkaProducer(bootstrap_servers=['localhost:19092'])
+        data1={'content' :rsp.content}
+        producer.send('contents' ,value=data1)
+        sleep(2)
+
     else:
         print('nochange')
