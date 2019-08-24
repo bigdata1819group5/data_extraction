@@ -2,6 +2,7 @@ from celery import Celery
 from celery.schedules import crontab
 import os
 from requests import get
+import random
 
 lastcontent = ''
 app = Celery('tasks', broker='redis://172.20.0.10:6379/0')
@@ -25,7 +26,7 @@ def test():
     if rsp.content != lastcontent :
         print('change')
         lastcontent=rsp.content
-        path=os.path.join(DATa_dir,'tehran_{}.gpx'.format(1))
+        path=os.path.join(DATa_dir,'tehran_{}.gpx'.format(random.randint(10000)))
         with open(path,'wb') as f:
             f.write(rsp.content)
     else:
