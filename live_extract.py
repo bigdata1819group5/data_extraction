@@ -10,6 +10,7 @@ ENDPOINT = 'https://api.openstreetmap.org/api/0.6/trackpoints?bbox={}&page={}'
 LEFT_BOTTOM = (35.6060, 51.2086)
 RIGHT_TOP = (35.8056, 51.5753)
 KAFKA_BROKER = os.environ.get('KAFKA_BROKER', 'localhost:19092')
+JOB_PERIOD = os.environ.get('JOB_PERIOD', '60')
 
 lastcontent = ''
 app = Celery('tasks', broker=redis_backend)
@@ -17,7 +18,7 @@ app = Celery('tasks', broker=redis_backend)
 
 @app.on_after_configure.connect
 def setup_periodic_task(sender, **kwargs):
-    sender.add_periodic_task(5.0, collect_data.s())
+    sender.add_periodic_task(int(JOB_PERIOD), collect_data.s())
 
 
 @app.task
