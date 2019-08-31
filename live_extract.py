@@ -35,5 +35,6 @@ def collect_data():
         lastcontent = rsp.content
         producer = KafkaProducer(bootstrap_servers=[KAFKA_BROKER])
         producer.send('contents', value=rsp.content)
+        producer.flush()
     else:
         print('nochange')
