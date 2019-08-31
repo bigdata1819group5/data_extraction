@@ -14,6 +14,7 @@ JOB_PERIOD = os.environ.get('JOB_PERIOD', '60')
 
 lastcontent = ''
 app = Celery('tasks', broker=redis_backend)
+app.conf.worker_concurrency = 1
 
 
 @app.on_after_configure.connect
@@ -33,7 +34,6 @@ def collect_data():
         print('change')
         lastcontent = rsp.content
         producer = KafkaProducer(bootstrap_servers=[KAFKA_BROKER])
-        data1 = {'content': rsp.content}
-        producer.send('contents', value=data1)
+        producer.send('contents', value=rsp.content)
     else:
         print('nochange')
