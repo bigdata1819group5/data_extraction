@@ -2,3 +2,4 @@ requests
 celery
 requests
 kafka-python
+redis
